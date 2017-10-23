@@ -89,11 +89,6 @@ class ExtensionConfig(object):
     cxx.cflags += [
       '-pipe',
       '-fno-strict-aliasing',
-      '-Wall',
-      '-Werror',
-      '-Wno-unused',
-      '-Wno-switch',
-      '-Wno-array-bounds',
       '-msse',
       '-m32',
       '-fvisibility=hidden',
@@ -102,8 +97,6 @@ class ExtensionConfig(object):
       '-std=c++11',
       '-fno-exceptions',
       '-fno-threadsafe-statics',
-      '-Wno-non-virtual-dtor',
-      '-Wno-overloaded-virtual',
       '-fvisibility-inlines-hidden',
     ]
     cxx.linkflags += ['-m32']
