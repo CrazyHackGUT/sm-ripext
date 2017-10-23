@@ -105,6 +105,7 @@ class ExtensionConfig(object):
       '-Wno-non-virtual-dtor',
       '-Wno-overloaded-virtual',
       '-fvisibility-inlines-hidden',
+      '-Wtautological-undefined-compare',
     ]
     cxx.linkflags += ['-m32']
 
