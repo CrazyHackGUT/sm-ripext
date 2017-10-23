@@ -111,6 +111,15 @@ void RipExt::RunFrame()
 	struct HTTPResponse response = callback.response;
 	cell_t value = callback.value;
 
+	/* Forward can be a null after processed request. */
+	if (forward == NULL)
+	{
+		smutils->LogError(myself, "Invalid forward after processed request.");
+		this->callbackMutex->Unlock();
+
+		return;
+	}
+
 	/* Return early if the plugin was unloaded while the thread was running */
 	if (forward->GetFunctionCount() == 0)
 	{
