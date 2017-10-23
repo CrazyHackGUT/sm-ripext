@@ -106,7 +106,7 @@ void RipExt::RunFrame()
 
 	struct HTTPRequestCallback &callback = this->callbackQueue.front();
 	this->callbackQueue.pop();
-	if (&callback == NULL)
+	if (callback == NULL)
 	{
 		smutils->LogError(myself, "Invalid callback after processed request.");
 		this->callbackMutex->Unlock();
