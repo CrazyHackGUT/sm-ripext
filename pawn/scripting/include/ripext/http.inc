@@ -121,4 +121,10 @@ methodmap HTTPClient < Handle
 	// @param callback   A function to use as a callback when the request has finished.
 	// @param value      Optional value to pass to the callback function.
 	public native void Delete(const char[] endpoint, HTTPRequestCallback callback, any value = 0);
+
+	// Connection timeout in seconds.
+	property int Timeout {};
+		public native get();
+		public native set(int iTimeout);
+	}
 };

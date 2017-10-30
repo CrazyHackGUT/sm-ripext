@@ -99,7 +99,7 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 	curl_easy_setopt(curl, CURLOPT_READDATA, &this->request);
 	curl_easy_setopt(curl, CURLOPT_READFUNCTION, &ReadRequestBody);
-	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, this->client->timeout);
 	curl_easy_setopt(curl, CURLOPT_URL, url.chars());
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &WriteResponseBody);
