@@ -29,13 +29,13 @@
 
 /* Basic information exposed publicly */
 #define SMEXT_CONF_NAME			"REST in Pawn"
-#define SMEXT_CONF_DESCRIPTION	"Provides HTTP and JSON natives for plugins"
-#define SMEXT_CONF_VERSION		"1.0.3"
-#define SMEXT_CONF_AUTHOR		"Tsunami"
-#define SMEXT_CONF_URL			"http://www.tsunami-productions.nl"
+#define SMEXT_CONF_DESCRIPTION		"Provides HTTP and JSON natives for plugins"
+#define SMEXT_CONF_VERSION		"1.0.4"
+#define SMEXT_CONF_AUTHOR		"Tsunami, CrazyHackGUT aka Kruzya"
+#define SMEXT_CONF_URL			"https://kruzefag.ru/"
 #define SMEXT_CONF_LOGTAG		"RIPEXT"
 #define SMEXT_CONF_LICENSE		"GPL"
-#define SMEXT_CONF_DATESTRING	__DATE__
+#define SMEXT_CONF_DATESTRING		__DATE__
 
 /**
  * @brief Exposes plugin's main interface.
