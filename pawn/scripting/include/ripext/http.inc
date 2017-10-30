@@ -123,7 +123,7 @@ methodmap HTTPClient < Handle
 	public native void Delete(const char[] endpoint, HTTPRequestCallback callback, any value = 0);
 
 	// Connection timeout in seconds.
-	property int Timeout {};
+	property int Timeout {
 		public native get();
 		public native set(int iTimeout);
 	}
