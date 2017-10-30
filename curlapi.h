@@ -27,6 +27,7 @@
 class HTTPClient
 {
 public:
+
 	HTTPClient(const char *baseURL) : baseURL(baseURL) {}
 
 	const ke::AString BuildURL(const ke::AString &endpoint) const;
@@ -37,6 +38,7 @@ public:
 
 	void SetHeader(const char *name, const char *value);
 
+	long timeout = 30L;
 private:
 	const ke::AString baseURL;
 	HTTPHeaderMap headers;

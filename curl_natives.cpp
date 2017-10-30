@@ -208,6 +208,41 @@ static cell_t DeleteRequest(IPluginContext *pContext, const cell_t *params)
 	return 1;
 }
 
+/**
+ * @section HTTPClient properties
+ */
+static cell_t GetClientTimeout(IPluginContext *pContext, const cell_t *params)
+{
+	HandleError err;
+	HandleSecurity sec(pContext->GetIdentity(), myself->GetIdentity());
+
+	struct HTTPClient *client;
+	Handle_t hndlClient = static_cast<Handle_t>(params[1]);
+	if ((err=handlesys->ReadHandle(hndlClient, htHTTPClientObject, &sec, (void **)&client)) != HandleError_None)
+	{
+		return pContext->ThrowNativeError("Invalid HTTP client handle %x (error %d)", hndlClient, err);
+	}
+
+	// return static_cast<cell_t>(client->timeout);
+	return client->timeout;
+}
+
+static cell_t SetClientTimeout(IPluginContext *pContext, const cell_t *params)
+{
+	HandleError err;
+	HandleSecurity sec(pContext->GetIdentity(), myself->GetIdentity());
+
+	struct HTTPClient *client;
+	Handle_t hndlClient = static_cast<Handle_t>(params[1]);
+	if ((err=handlesys->ReadHandle(hndlClient, htHTTPClientObject, &sec, (void **)&client)) != HandleError_None)
+	{
+		return pContext->ThrowNativeError("Invalid HTTP client handle %x (error %d)", hndlClient, err);
+	}
+
+	client->timeout = params[2];
+	return 1;
+}
+
 static cell_t GetResponseData(IPluginContext *pContext, const cell_t *params)
 {
 	HandleError err;
@@ -264,6 +299,10 @@ const sp_nativeinfo_t curl_natives[] =
 	{"HTTPClient.Post",					PostRequest},
 	{"HTTPClient.Put",					PutRequest},
 	{"HTTPClient.Patch",				PatchRequest},
+
+	{"HTTPClient.Timeout.set",			SetClientTimeout},
+	{"HTTPClient.Timeout.get",			GetClientTimeout},
+
 	{"HTTPClient.Delete",				DeleteRequest},
 	{"HTTPResponse.Data.get",			GetResponseData},
 	{"HTTPResponse.Status.get",			GetResponseStatus},
