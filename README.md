@@ -1,0 +1,2 @@
+# sm-ripext
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8e6998c5b6e347dc954397a3456fb68a)](https://www.codacy.com/app/CrazyHackGUT/sm-ripext?utm_source=github.com&utm_medium=referral&utm_content=CrazyHackGUT/sm-ripext&utm_campaign=badger)
