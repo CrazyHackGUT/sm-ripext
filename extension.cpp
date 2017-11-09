@@ -107,23 +107,15 @@ void RipExt::RunFrame()
 	struct HTTPRequestCallback &callback = this->callbackQueue.front();
 	this->callbackQueue.pop();
 
-	IChangeableForward *forward = callback.forward;
+	IPluginFunction *function = callback.function;
 	struct HTTPResponse response = callback.response;
 	cell_t value = callback.value;
 
-	/* Forward can be a null after processed request. */
-	if (forward == NULL)
+	/* Function can be a null or not callable after processed request. */
+	if (function == NULL || !function->IsRunnable())
 	{
-		smutils->LogError(myself, "Invalid forward after processed request.");
-		this->callbackMutex->Unlock();
-
-		return;
-	}
-
-	/* Return early if the plugin was unloaded while the thread was running */
-	if (forward->GetFunctionCount() == 0)
-	{
-		forwards->ReleaseForward(forward);
+		smutils->LogError(myself, "Invalid function after processed request.");
+		json_decref(response.data);
 		this->callbackMutex->Unlock();
 
 		return;
@@ -133,21 +125,19 @@ void RipExt::RunFrame()
 	Handle_t hndlResponse = handlesys->CreateHandleEx(htHTTPResponseObject, &response, &sec, NULL, NULL);
 	if (hndlResponse == BAD_HANDLE)
 	{
-		forwards->ReleaseForward(forward);
 		this->callbackMutex->Unlock();
 
 		smutils->LogError(myself, "Could not create HTTP response handle.");
 		return;
 	}
 
-	forward->PushCell(hndlResponse);
-	forward->PushCell(value);
-	forward->Execute(NULL);
+	function->PushCell(hndlResponse);
+	function->PushCell(value);
+	function->Execute(NULL);
 
 	handlesys->FreeHandle(hndlResponse, &sec);
 	handlesys->FreeHandle(response.hndlData, &sec);
 
-	forwards->ReleaseForward(forward);
 	this->callbackMutex->Unlock();
 }
 

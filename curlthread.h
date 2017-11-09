@@ -27,8 +27,8 @@
 class HTTPRequestThread : public IThread
 {
 public:
-	HTTPRequestThread(HTTPClient *client, struct HTTPRequest request, IChangeableForward *forward, cell_t value)
-		: client(client), request(request), forward(forward), value(value) {}
+	HTTPRequestThread(HTTPClient *client, struct HTTPRequest request, IPluginFunction *function, cell_t value)
+		: client(client), request(request), function(function), value(value) {}
 
 	void RunThread(IThreadHandle *pThread);
 	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
@@ -36,7 +36,7 @@ public:
 private:
 	HTTPClient *client;
 	struct HTTPRequest request;
-	IChangeableForward *forward;
+	IPluginFunction *function;
 	cell_t value;
 };
 
