@@ -66,10 +66,10 @@ struct HTTPResponse {
 };
 
 struct HTTPRequestCallback {
-	HTTPRequestCallback(IChangeableForward *forward, struct HTTPResponse response, cell_t value)
-		: forward(forward), response(response), value(value) {}
+	HTTPRequestCallback(IPluginFunction *function, struct HTTPResponse response, cell_t value)
+		: function(function), response(response), value(value) {}
 
-	IChangeableForward *forward;
+	IPluginFunction *function;
 	struct HTTPResponse response;
 	cell_t value;
 };
