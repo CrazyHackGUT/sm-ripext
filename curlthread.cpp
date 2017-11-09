@@ -57,8 +57,6 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 	CURL *curl = curl_easy_init();
 	if (curl == NULL)
 	{
-		forwards->ReleaseForward(this->forward);
-
 		smutils->LogError(myself, "Could not initialize cURL session.");
 		return;
 	}
@@ -110,7 +108,6 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 		curl_easy_cleanup(curl);
 		curl_slist_free_all(headers);
 		free(this->request.body);
-		forwards->ReleaseForward(this->forward);
 
 		smutils->LogError(myself, "HTTP request failed: %s", error);
 		return;
@@ -123,5 +120,5 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 	curl_slist_free_all(headers);
 	free(this->request.body);
 
-	g_RipExt.AddCallbackToQueue(HTTPRequestCallback(this->forward, response, this->value));
+	g_RipExt.AddCallbackToQueue(HTTPRequestCallback(this->function, response, this->value));
 }
