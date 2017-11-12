@@ -108,14 +108,14 @@ void RipExt::RunFrame()
 	this->callbackQueue.pop();
 
 	IPluginFunction *function = callback.function;
-	struct HTTPResponse response = callback.response;
+	struct HTTPResponse *response = callback.response;
 	cell_t value = callback.value;
 
 	/* Function can be a null or not callable after processed request. */
 	if (function == NULL || !function->IsRunnable())
 	{
 		smutils->LogError(myself, "Invalid function after processed request.");
-		json_decref(response.data);
+		json_decref(response->data);
 		this->callbackMutex->Unlock();
 
 		return;
@@ -136,7 +136,7 @@ void RipExt::RunFrame()
 	function->Execute(NULL);
 
 	handlesys->FreeHandle(hndlResponse, &sec);
-	handlesys->FreeHandle(response.hndlData, &sec);
+	handlesys->FreeHandle(response->hndlData, &sec);
 
 	this->callbackMutex->Unlock();
 }

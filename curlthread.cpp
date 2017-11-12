@@ -52,6 +52,27 @@ static size_t WriteResponseBody(void *body, size_t size, size_t nmemb, void *use
 	return total;
 }
 
+static size_t ReceiveResponseHeader(char *buffer, size_t size, size_t nmemb, void *userdata)
+{
+	size_t total = size * nmemb;
+	struct HTTPResponse *response = (struct HTTPResponse *)userdata;
+
+	char *name = strtok(buffer, ":");
+	char *value = strtok(NULL, "\n");
+	if (value == NULL)
+	{
+		return total;
+	}
+
+	/* Trim leading space */
+	value++;
+
+	ke::AString vstr(value);
+	response->headers.replace(name, ke::Move(vstr));
+
+	return total;
+}
+
 void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 {
 	CURL *curl = curl_easy_init();
@@ -68,7 +89,7 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 	const ke::AString url = this->client->BuildURL(this->request.endpoint);
 
 	struct curl_slist *headers = this->client->BuildHeaders(this->request);
-	struct HTTPResponse response;
+	struct HTTPResponse *response = new HTTPResponse();
 
 	if (this->request.method.compare("POST") == 0)
 	{
@@ -93,6 +114,8 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error);
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+	curl_easy_setopt(curl, CURLOPT_HEADERDATA, &response);
+	curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, &ReceiveResponseHeader);
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 	curl_easy_setopt(curl, CURLOPT_READDATA, &this->request);
@@ -113,8 +136,8 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 		return;
 	}
 
-	response.data = json_loads(response.body, 0, NULL);
-	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response.status);
+	response->data = json_loads(response->body, 0, NULL);
+	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response->status);
 
 	curl_easy_cleanup(curl);
 	curl_slist_free_all(headers);

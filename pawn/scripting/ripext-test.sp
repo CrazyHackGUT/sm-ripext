@@ -45,6 +45,11 @@ public void OnHTTPResponse(HTTPResponse response, any value)
         PrintToServer("[ERR] %s Status: %d", sHTTPTags[value], response.Status);
         return;
     }
+
+    char szServerHeader[128];
+    response.GetHeader("Server", szServerHeader, sizeof szServerHeader);
+    PrintToServer("[OK] Server: %s", szServerHeader);
+
     if (response.Data == null) {
         PrintToServer("[OK] %s No response", sHTTPTags[value]);
         return;

@@ -55,22 +55,23 @@ struct HTTPRequest {
 };
 
 struct HTTPResponse {
-	HTTPResponse() : status(0), data(NULL), hndlData(BAD_HANDLE), body((char *)malloc(1)), size(0) {}
+	HTTPResponse() : status(0), data(NULL), hndlData(BAD_HANDLE), headers(), body((char *)malloc(1)), size(0) {}
 
 	long status;
 	json_t *data;
 	Handle_t hndlData;
+	HTTPHeaderMap headers;
 
 	char *body;
 	size_t size;
 };
 
 struct HTTPRequestCallback {
-	HTTPRequestCallback(IPluginFunction *function, struct HTTPResponse response, cell_t value)
+	HTTPRequestCallback(IPluginFunction *function, struct HTTPResponse *response, cell_t value)
 		: function(function), response(response), value(value) {}
 
 	IPluginFunction *function;
-	struct HTTPResponse response;
+	struct HTTPResponse *response;
 	cell_t value;
 };
 
