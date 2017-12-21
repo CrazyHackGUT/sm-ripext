@@ -30,7 +30,7 @@
 /* Basic information exposed publicly */
 #define SMEXT_CONF_NAME			"REST in Pawn"
 #define SMEXT_CONF_DESCRIPTION		"Provides HTTP and JSON natives for plugins"
-#define SMEXT_CONF_VERSION		"1.0.4"
+#define SMEXT_CONF_VERSION		"1.0.5"
 #define SMEXT_CONF_AUTHOR		"Tsunami, CrazyHackGUT aka Kruzya"
 #define SMEXT_CONF_URL			"https://kruzefag.ru/"
 #define SMEXT_CONF_LOGTAG		"RIPEXT"

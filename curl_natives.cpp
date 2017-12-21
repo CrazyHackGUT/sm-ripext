@@ -227,6 +227,36 @@ static cell_t GetClientTimeout(IPluginContext *pContext, const cell_t *params)
 	return client->timeout;
 }
 
+static cell_t GetClientConnectTimeout(IPluginContext *pContext, const cell_t *params)
+{
+	HandleError err;
+	HandleSecurity sec(pContext->GetIdentity(), myself->GetIdentity());
+
+	struct HTTPClient *client;
+	Handle_t hndlClient = static_cast<Handle_t>(params[1]);
+	if ((err=handlesys->ReadHandle(hndlClient, htHTTPClientObject, &sec, (void **)&client)) != HandleError_None)
+	{
+		return pContext->ThrowNativeError("Invalid HTTP client handle %x (error %d)", hndlClient, err);
+	}
+
+	return client->connect_timeout;
+}
+
+static cell_t GetClientFollowLocation(IPluginContext *pContext, const cell_t *params)
+{
+	HandleError err;
+	HandleSecurity sec(pContext->GetIdentity(), myself->GetIdentity());
+
+	struct HTTPClient *client;
+	Handle_t hndlClient = static_cast<Handle_t>(params[1]);
+	if ((err=handlesys->ReadHandle(hndlClient, htHTTPClientObject, &sec, (void **)&client)) != HandleError_None)
+	{
+		return pContext->ThrowNativeError("Invalid HTTP client handle %x (error %d)", hndlClient, err);
+	}
+
+	return client->follow_location;
+}
+
 static cell_t SetClientTimeout(IPluginContext *pContext, const cell_t *params)
 {
 	HandleError err;
@@ -243,8 +273,39 @@ static cell_t SetClientTimeout(IPluginContext *pContext, const cell_t *params)
 	return 1;
 }
 
-static cell_t GetResponseData(IPluginContext *pContext, const cell_t *params)
+static cell_t SetClientConnectTimeout(IPluginContext *pContext, const cell_t *params)
 {
+	HandleError err;
+	HandleSecurity sec(pContext->GetIdentity(), myself->GetIdentity());
+
+	struct HTTPClient *client;
+	Handle_t hndlClient = static_cast<Handle_t>(params[1]);
+	if ((err=handlesys->ReadHandle(hndlClient, htHTTPClientObject, &sec, (void **)&client)) != HandleError_None)
+	{
+		return pContext->ThrowNativeError("Invalid HTTP client handle %x (error %d)", hndlClient, err);
+	}
+
+	client->connect_timeout = params[2];
+	return 1;
+}
+
+static cell_t SetClientFollowLocation(IPluginContext *pContext, const cell_t *params)
+{
+	HandleError err;
+	HandleSecurity sec(pContext->GetIdentity(), myself->GetIdentity());
+
+	struct HTTPClient *client;
+	Handle_t hndlClient = static_cast<Handle_t>(params[1]);
+	if ((err=handlesys->ReadHandle(hndlClient, htHTTPClientObject, &sec, (void **)&client)) != HandleError_None)
+	{
+		return pContext->ThrowNativeError("Invalid HTTP client handle %x (error %d)", hndlClient, err);
+	}
+
+	client->follow_location = (params[2] == 0 ? 0L : 1L);
+	return 1;
+}
+
+static cell_t GetResponseData(IPluginContext *pContext, const cell_t *params) {
 	HandleError err;
 	HandleSecurity sec(pContext->GetIdentity(), myself->GetIdentity());
 
@@ -302,6 +363,10 @@ const sp_nativeinfo_t curl_natives[] =
 
 	{"HTTPClient.Timeout.set",			SetClientTimeout},
 	{"HTTPClient.Timeout.get",			GetClientTimeout},
+	{"HTTPClient.ConnectTimeout.set",		SetClientConnectTimeout},
+	{"HTTPClient.ConnectTimeout.get",		GetClientConnectTimeout},
+	{"HTTPClient.FollowLocation.set",		SetClientFollowLocation},
+	{"HTTPClient.FollowLocation.get",		GetClientFollowLocation},
 
 	{"HTTPClient.Delete",				DeleteRequest},
 	{"HTTPResponse.Data.get",			GetResponseData},

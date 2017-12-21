@@ -67,11 +67,15 @@ struct HTTPResponse {
 
 struct HTTPRequestCallback {
 	HTTPRequestCallback(IPluginFunction *function, struct HTTPResponse response, cell_t value)
-		: function(function), response(response), value(value) {}
+		: function(function), response(response), value(value), error(nullptr) {}
+
+	HTTPRequestCallback(IPluginFunction *function, cell_t value, char* error)
+		: function(function), response(), value(value), error(error) {}
 
 	IPluginFunction *function;
 	struct HTTPResponse response;
 	cell_t value;
+	char*  error;
 };
 
 

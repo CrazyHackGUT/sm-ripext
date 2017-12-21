@@ -39,6 +39,8 @@ public:
 	void SetHeader(const char *name, const char *value);
 
 	long timeout = 30L;
+	long follow_location = 1L;
+	long connect_timeout = 10L;
 private:
 	const ke::AString baseURL;
 	HTTPHeaderMap headers;

@@ -56,6 +56,7 @@ enum HTTPStatus
 typeset HTTPRequestCallback
 {
 	function void (HTTPResponse response, any value);
+	function void (HTTPResponse response, any value, const char[] szError);
 };
 
 methodmap HTTPResponse
@@ -122,9 +123,21 @@ methodmap HTTPClient < Handle
 	// @param value      Optional value to pass to the callback function.
 	public native void Delete(const char[] endpoint, HTTPRequestCallback callback, any value = 0);
 
-	// Connection timeout in seconds.
+	// Timeout in seconds.
 	property int Timeout {
 		public native get();
 		public native set(int iTimeout);
+	}
+
+	// Connection timeout in seconds.
+	property int ConnectTimeout {
+		public native get();
+		public native set(int iConnectTimeout);
+	}
+
+	// Follow location? (HTTP response code 30X)
+	property bool FollowLocation {
+		public native get();
+		public native set(bool bFollowLocation);
 	}
 };

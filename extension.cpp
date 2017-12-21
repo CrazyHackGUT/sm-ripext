@@ -110,14 +110,29 @@ void RipExt::RunFrame()
 	IPluginFunction *function = callback.function;
 	struct HTTPResponse response = callback.response;
 	cell_t value = callback.value;
+	char* szError = callback.error;
 
 	/* Function can be a null or not callable after processed request. */
 	if (function == NULL || !function->IsRunnable())
 	{
 		smutils->LogError(myself, "Invalid function after processed request.");
 		json_decref(response.data);
+		if (szError != nullptr) delete []szError;
 		this->callbackMutex->Unlock();
 
+		return;
+	}
+
+	/* Error handling from cURL Thread */
+	if (szError != nullptr) {
+		function->PushCell(BAD_HANDLE);
+		function->PushCell(value);
+		function->PushString(szError);
+		function->Execute(NULL);
+
+		json_decref(response.data);
+		delete []szError;
+		this->callbackMutex->Unlock();
 		return;
 	}
 
@@ -125,6 +140,7 @@ void RipExt::RunFrame()
 	Handle_t hndlResponse = handlesys->CreateHandleEx(htHTTPResponseObject, &response, &sec, NULL, NULL);
 	if (hndlResponse == BAD_HANDLE)
 	{
+		json_decref(response.data);
 		this->callbackMutex->Unlock();
 
 		smutils->LogError(myself, "Could not create HTTP response handle.");
@@ -133,6 +149,7 @@ void RipExt::RunFrame()
 
 	function->PushCell(hndlResponse);
 	function->PushCell(value);
+	function->PushString("");
 	function->Execute(NULL);
 
 	handlesys->FreeHandle(hndlResponse, &sec);

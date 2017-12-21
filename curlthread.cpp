@@ -54,10 +54,13 @@ static size_t WriteResponseBody(void *body, size_t size, size_t nmemb, void *use
 
 void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 {
+	char* szError = new char[256];
 	CURL *curl = curl_easy_init();
 	if (curl == NULL)
 	{
-		smutils->LogError(myself, "Could not initialize cURL session.");
+		//  smutils->LogError(myself, "Could not initialize cURL session.");
+		smutils->Format(szError, 256, "Could not initialize cURL session.");
+		g_RipExt.AddCallbackToQueue(HTTPRequestCallback(this->function, this->value, szError));
 		return;
 	}
 
@@ -90,9 +93,9 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 
 	curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "");
 	curl_easy_setopt(curl, CURLOPT_CAINFO, caBundlePath);
-	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, this->client->connect_timeout);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error);
-	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, this->client->follow_location);
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 	curl_easy_setopt(curl, CURLOPT_READDATA, &this->request);
@@ -109,7 +112,9 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 		curl_slist_free_all(headers);
 		free(this->request.body);
 
-		smutils->LogError(myself, "HTTP request failed: %s", error);
+		//  smutils->LogError(myself, "HTTP request failed: %s", error);
+		smutils->Format(szError, 256, "%s", error);
+		g_RipExt.AddCallbackToQueue(HTTPRequestCallback(this->function, this->value, szError));
 		return;
 	}
 
@@ -121,4 +126,5 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle)
 	free(this->request.body);
 
 	g_RipExt.AddCallbackToQueue(HTTPRequestCallback(this->function, response, this->value));
+	delete []szError;
 }
