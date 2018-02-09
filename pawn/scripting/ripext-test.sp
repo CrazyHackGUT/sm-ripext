@@ -39,8 +39,13 @@ public void OnPluginStart()
     delete hJSONObject;
 }
 
-public void OnHTTPResponse(HTTPResponse response, any value)
+public void OnHTTPResponse(HTTPResponse response, any value, const char[] szError)
 {
+    if (szError[0] != 0) {
+        PrintToServer("[ERR] %s Error: %s", sHTTPTags[value], szError);
+        return;
+    }
+    
     if (response.Status != HTTPStatus_OK) {
         PrintToServer("[ERR] %s Status: %d", sHTTPTags[value], response.Status);
         return;
